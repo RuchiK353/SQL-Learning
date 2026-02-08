@@ -2,9 +2,94 @@
 
 > Documenting my path from zero to Data Analyst
 
-## 🚀 Note: Strong Start!
+![Progress](https://img.shields.io/badge/Days%20Completed-3%2F270-blue)
+![Status](https://img.shields.io/badge/Status-In%20Progress-green)
+![Streak](https://img.shields.io/badge/Streak-2%20days-red)
 
-Completed 2 lessons on Day 1 to build initial momentum. Future pace will be sustainable and consistent.
+---
+
+## Day 3 - Advanced Filtering (February 8, 2026)
+
+### What I Learned:
+- Combining conditions with AND, OR, NOT
+- Using parentheses to control logic order
+- IN operator for multiple values
+- NOT IN to exclude multiple values
+- DISTINCT to find unique values
+- COUNT with DISTINCT for unique counts
+
+### Queries I Wrote Today:
+
+```sql
+-- Combining AND conditions
+SELECT * FROM movies 
+WHERE year > 2000 AND rating > 8;
+
+-- Using OR for alternatives
+SELECT * FROM movies 
+WHERE year < 1990 OR year > 2010;
+
+-- NOT to exclude
+SELECT * FROM movies 
+WHERE NOT director = 'John Lasseter';
+
+-- Complex logic with parentheses
+SELECT * FROM movies 
+WHERE (year > 2000 OR rating > 8) 
+AND director IN ('Pixar', 'Disney');
+
+-- IN operator (cleaner than multiple ORs)
+SELECT * FROM movies 
+WHERE director IN ('Pixar', 'Disney', 'DreamWorks');
+
+-- NOT IN to exclude multiple
+SELECT * FROM movies 
+WHERE year NOT IN (2005, 2010, 2015);
+
+-- HackerRank: Count unique vs total
+SELECT COUNT(CITY) - COUNT(DISTINCT CITY) FROM STATION;
+
+-- HackerRank: Filter cities starting with vowels
+SELECT DISTINCT CITY FROM STATION 
+WHERE CITY LIKE 'A%' OR CITY LIKE 'E%' 
+   OR CITY LIKE 'I%' OR CITY LIKE 'O%' 
+   OR CITY LIKE 'U%';
+
+-- Alternative using IN (cleaner)
+SELECT DISTINCT CITY FROM STATION 
+WHERE LEFT(CITY, 1) IN ('A','E','I','O','U');
+```
+
+### Key Takeaways:
+1. AND requires BOTH conditions to be true
+2. OR requires AT LEAST ONE condition to be true
+3. Use parentheses () to control order of operations
+4. IN is cleaner than multiple OR statements
+5. DISTINCT removes duplicate values
+6. Can combine COUNT with DISTINCT to count unique values
+
+### HackerRank Progress:
+- Problems Solved Today: 5/5 ✅
+- Total Problems Solved: 10
+- Sections: Basic Select
+- Success Rate: 100%
+- New Concepts: DISTINCT, COUNT with DISTINCT, string functions
+
+### Challenges Faced:
+- Weather Observation Station 5 was tricky (ORDER BY + LIMIT for min/max)
+- Understanding when to use AND vs OR
+- Remembering to use DISTINCT when counting unique values
+
+### Time Spent: 1 hour
+### Exercises Completed: 
+- SQLBolt Lesson 5 (review)
+- HackerRank Basic Select (5 problems)
+- IN operator practice (3 queries)
+
+### Tomorrow's Goal:
+- Learn aggregate functions (COUNT, SUM, AVG, MIN, MAX)
+- Practice GROUP BY basics
+- Solve 5 more HackerRank problems from "Aggregation" section
 
 ---
 
@@ -115,19 +200,19 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 ### Month 1: SQL Foundations
 - ✅ Day 1 - SQL Basics (Feb 7, 2026)
 - ✅ Day 2 - Sorting & Filtering (Feb 7, 2026)
-- ⬜ Day 3 - Advanced Filtering
+- ✅ Day 3 - Advanced Filtering (Feb 8, 2026)
 - ⬜ Day 4 - Aggregate Functions
 - ⬜ Day 5 - GROUP BY Practice
-- ⬜ Day 6 - Practice Day
+- ⬜ Day 6 - JOINs Introduction
 - ⬜ Day 7 - Week Review
 
 ### Stats
-- **Total Days Completed:** 2/270
-- **Actual Days Elapsed:** 1 day
-- **Current Streak:** 1 day 🔥
-- **Skills Acquired:** SELECT, WHERE, ORDER BY, LIMIT, filtering, sorting
-- **HackerRank Problems Solved:** 5
-- **Total Exercises Completed:** 19
+- **Total Days Completed:** 3/270
+- **Actual Days Elapsed:** 2 days
+- **Current Streak:** 2 days 🔥🔥
+- **Skills Acquired:** SELECT, WHERE, ORDER BY, LIMIT, AND, OR, NOT, IN, DISTINCT
+- **HackerRank Problems Solved:** 10
+- **Total Exercises Completed:** 24+
 - **Next Milestone:** Complete Week 1 (Day 7)
 
 ---
@@ -135,7 +220,8 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 ## 🎯 Learning Goals
 
 **Short-term (Month 1):**
-- ✅ Master SQL fundamentals
+- ✅ Master SQL fundamentals (filtering ✓, sorting ✓)
+- ⬜ Learn aggregate functions (next up!)
 - ⬜ Complete 3 SQL projects
 - ⬜ Earn HackerRank SQL certification
 
@@ -168,6 +254,16 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 
 ## 📚 Concepts Mastered
 
+### Day 3:
+- `AND` - both conditions must be true
+- `OR` - at least one condition must be true
+- `NOT` - negate a condition
+- `IN` - match any value in a list
+- `NOT IN` - exclude values in a list
+- `DISTINCT` - remove duplicates
+- `COUNT(DISTINCT column)` - count unique values
+- Parentheses `()` for complex logic
+
 ### Day 2:
 - `ORDER BY` - sort results
 - `ASC` - ascending order (default)
@@ -190,24 +286,51 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 
 ## 💪 Daily Reflections
 
+**Day 3 Reflection (February 8, 2026):**
+- What went well: IN operator clicked immediately, HackerRank getting easier
+- What was challenging: Complex WHERE logic with multiple conditions
+- Energy level: 8/10
+- Confidence level: 8/10
+- Favorite moment: Solving Weather Observation Station 4 (felt like a puzzle!)
+- Tomorrow's excitement: Ready to learn aggregate functions!
+
+**Day 2 Reflection (February 7, 2026):**
+- Completed with Day 1 for strong start
+
 **Day 1 Reflection (February 7, 2026):**
 - What went well: Completed 2 lessons! Strong momentum established
 - What was challenging: Staying focused for 2 hours
 - Energy level: 9/10
 - Confidence level: 8/10
 - Feeling: Excited and motivated!
-- Tomorrow's plan: Back to 1 lesson/day for sustainability
 
 ---
 
 ## 🏆 Achievements Unlocked
-- ✅ 2 lessons completed on Day 1 (strong start!)
-- ✅ First HackerRank problems solved
-- ✅ 19 total SQL exercises completed
-- ✅ GitHub portfolio established
-- ✅ Learning momentum activated
+- ✅ 3-day concept mastery (SELECT, WHERE, ORDER BY, AND/OR/NOT, IN)
+- ✅ 10 HackerRank problems solved
+- ✅ 2-day learning streak maintained
+- ✅ Advanced filtering skills acquired
+- ✅ Portfolio consistently updated
 
 ---
 
-*Last updated: February 7, 2026*
-*Target completion: October 2026 (9-month journey)*
+## 📈 Learning Insights
+
+**Patterns I'm Noticing:**
+1. SQL problems are like puzzles - breaking them into steps helps
+2. Reading the question 2-3 times prevents mistakes
+3. IN operator saves so much typing vs multiple ORs
+4. DISTINCT is crucial for "unique" questions
+5. HackerRank discussions are gold when stuck
+
+**Study Habits Working Well:**
+- 1 hour daily is sustainable
+- Documenting immediately helps retention
+- HackerRank for practice > just reading tutorials
+- Taking screenshots of solutions for future reference
+
+---
+
+*Last updated: February 8, 2026*
+*Consistency streak: 2 days | Target completion: October 2026*
