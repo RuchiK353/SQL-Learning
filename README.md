@@ -2,9 +2,132 @@
 
 > Documenting my path from zero to Data Analyst
 
-![Progress](https://img.shields.io/badge/Days%20Completed-4%2F270-blue)
+![Progress](https://img.shields.io/badge/Days%20Completed-5%2F270-blue)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-green)
-![Streak](https://img.shields.io/badge/Streak-4%20days-red)
+![Streak](https://img.shields.io/badge/Streak-5%20days-red)
+
+---
+
+## Day 5 - GROUP BY Mastery (February 11, 2026)
+
+### What I Learned:
+- GROUP BY - split data into groups and aggregate each group separately
+- Combining GROUP BY with COUNT, SUM, AVG, MIN, MAX
+- Multiple GROUP BY columns (multi-dimensional analysis)
+- Query execution order (WHERE before GROUP BY, ORDER BY after)
+- The golden rule: Every SELECT column must be in GROUP BY or in aggregate function
+- Real business breakdowns (by region, category, country, etc.)
+
+### Queries I Wrote Today:
+
+```sql
+-- Count customers by country
+SELECT Country, COUNT(*) as customer_count
+FROM Customers
+GROUP BY Country
+ORDER BY customer_count DESC;
+
+-- Total sales by region
+SELECT region, SUM(sales) as total_sales
+FROM orders
+GROUP BY region
+ORDER BY total_sales DESC;
+
+-- Average price by category
+SELECT category, AVG(price) as avg_price
+FROM products
+GROUP BY category;
+
+-- Multiple aggregates per group
+SELECT 
+    category,
+    COUNT(*) as product_count,
+    AVG(price) as avg_price,
+    MIN(price) as min_price,
+    MAX(price) as max_price
+FROM products
+GROUP BY category;
+
+-- Multiple GROUP BY columns (2 dimensions)
+SELECT country, city, COUNT(*) as customer_count
+FROM customers
+GROUP BY country, city
+ORDER BY customer_count DESC;
+
+-- Top 10 products by quantity sold
+SELECT product_id, SUM(quantity) as total_sold
+FROM order_items
+GROUP BY product_id
+ORDER BY total_sold DESC
+LIMIT 10;
+
+-- HackerRank: Top Earners
+SELECT (salary * months) as earnings, COUNT(*)
+FROM Employee
+GROUP BY earnings
+ORDER BY earnings DESC
+LIMIT 1;
+
+-- Monthly sales analysis
+SELECT 
+    DATE_TRUNC('month', order_date) as month,
+    SUM(amount) as monthly_sales,
+    COUNT(*) as order_count,
+    AVG(amount) as avg_order_value
+FROM orders
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY month;
+```
+
+### Key Takeaways:
+1. GROUP BY splits data into groups and runs aggregates on each group separately
+2. Without GROUP BY: one total for everything
+3. With GROUP BY: one total for EACH category/group
+4. Every column in SELECT must be in GROUP BY OR in an aggregate function
+5. Query order: SELECT → FROM → WHERE → GROUP BY → ORDER BY → LIMIT
+6. WHERE filters rows BEFORE grouping, HAVING filters groups AFTER (next lesson!)
+7. Can group by multiple columns for multi-dimensional analysis
+
+### Business Questions I Can Now Answer:
+- **"Total revenue by region?"** → `GROUP BY region`
+- **"How many customers per country?"** → `GROUP BY country`
+- **"Average order value by customer?"** → `GROUP BY customer_id`
+- **"Top selling products?"** → `GROUP BY product_id, ORDER BY SUM(quantity) DESC`
+- **"Monthly sales trends?"** → `GROUP BY month`
+- **"Revenue by product category?"** → `GROUP BY category`
+- **"Customers by city and country?"** → `GROUP BY country, city`
+
+### The Game-Changer Moment:
+Before: "Total sales: $500,000" (one number, not very useful)
+After: 
+- North: $150,000 (30%)
+- South: $120,000 (24%)  
+- East: $130,000 (26%)
+- West: $100,000 (20%)
+**Now I can identify which regions need attention!**
+
+### HackerRank Progress:
+- Problems Solved Today: 5 ✅
+- Total Problems Solved: 20+
+- Sections: Aggregation (with GROUP BY concepts)
+- Success Rate: 100%
+
+### Challenges Faced:
+- Remembering the golden rule (every SELECT column in GROUP BY or aggregate)
+- Understanding query execution order (WHERE before GROUP BY)
+- Top Earners problem took time but finally clicked!
+- Realizing GROUP BY creates one row per unique value/combination
+
+### Time Spent: 1 hour
+### Exercises Completed: 
+- 5 HackerRank problems
+- 8 practice GROUP BY queries on W3Schools
+- Real business analysis scenarios
+
+### Tomorrow's Goal:
+- Learn HAVING clause (filter groups after aggregation)
+- More advanced GROUP BY scenarios
+- Prepare for Week 1 review
 
 ---
 
@@ -69,29 +192,13 @@ FROM customers;
 - **Average order value:** `AVG(order_amount)`
 - **Highest sale:** `MAX(sale_amount)`
 - **Price range:** `MAX(price) - MIN(price)`
-- **Product count:** `COUNT(*)`
-- **Unique countries served:** `COUNT(DISTINCT country)`
 
 ### HackerRank Progress:
-- Problems Solved Today: 5 ✅
-- Total Problems Solved: 15+
-- New Section: Aggregation
-- Success Rate: 100%
-
-### Challenges Faced:
-- Understanding when to use COUNT(*) vs COUNT(column)
-- Remembering FLOOR for "round down" vs ROUND
-- Getting used to seeing many rows become one result
+- Problems Solved: 5 ✅
+- Total Problems: 15+
+- Section: Aggregation
 
 ### Time Spent: 1 hour
-### Exercises Completed: 
-- 5 HackerRank Aggregation problems
-- 6 practice queries on SQLiteOnline
-
-### Tomorrow's Goal:
-- Learn GROUP BY to combine aggregates with categories
-- Answer "revenue by region" instead of just "total revenue"
-- Unlock the full power of aggregate functions!
 
 ---
 
@@ -118,10 +225,6 @@ WHERE year > 2000 AND rating > 8;
 SELECT * FROM movies 
 WHERE year < 1990 OR year > 2010;
 
--- NOT to exclude
-SELECT * FROM movies 
-WHERE NOT director = 'John Lasseter';
-
 -- Complex logic with parentheses
 SELECT * FROM movies 
 WHERE (year > 2000 OR director = 'Pixar') 
@@ -131,34 +234,10 @@ AND rating > 8;
 SELECT * FROM movies 
 WHERE director IN ('Pixar', 'Disney', 'DreamWorks');
 
--- NOT IN to exclude multiple
-SELECT * FROM movies 
-WHERE year NOT IN (2005, 2010, 2015);
-
--- HackerRank: Count unique vs total
-SELECT COUNT(CITY) - COUNT(DISTINCT CITY) 
-FROM STATION;
-
 -- HackerRank: Filter cities starting with vowels
 SELECT DISTINCT CITY 
 FROM STATION 
 WHERE LEFT(CITY, 1) IN ('A','E','I','O','U');
-
--- HackerRank: Even ID numbers
-SELECT DISTINCT CITY 
-FROM STATION 
-WHERE ID % 2 = 0;
-
--- HackerRank: Shortest and longest city names (UNION)
-(SELECT CITY, LENGTH(CITY) 
- FROM STATION 
- ORDER BY LENGTH(CITY) ASC, CITY ASC 
- LIMIT 1)
-UNION
-(SELECT CITY, LENGTH(CITY) 
- FROM STATION 
- ORDER BY LENGTH(CITY) DESC, CITY ASC 
- LIMIT 1);
 ```
 
 ### Key Takeaways:
@@ -167,27 +246,12 @@ UNION
 3. Use parentheses () to control order of operations
 4. IN is cleaner than multiple OR statements
 5. DISTINCT removes duplicate values
-6. Can combine COUNT with DISTINCT to count unique values
-7. Modulo (%) operator useful for finding even/odd numbers
 
 ### HackerRank Progress:
-- Problems Solved Today: 5/5 ✅
-- Total Problems Solved: 10
-- Section: Basic Select (Weather Observation Station problems)
-- Success Rate: 100%
-- Hardest Problem: Weather Observation Station 5 (UNION with LENGTH)
-
-### Challenges Faced:
-- Weather Observation Station 5 was tricky (needed UNION)
-- Understanding when to use AND vs OR
-- Remembering to use DISTINCT when counting unique values
-- Parentheses placement in complex WHERE clauses
+- Problems Solved: 5/5 ✅
+- Total Problems: 10
 
 ### Time Spent: 1 hour
-### Exercises Completed: 
-- SQLBolt Lesson 5 (review)
-- HackerRank Basic Select (5 problems)
-- String function practice (3 queries)
 
 ---
 
@@ -204,10 +268,6 @@ UNION
 ### Queries I Wrote Today:
 
 ```sql
--- Sort by year ascending (oldest first)
-SELECT * FROM movies 
-ORDER BY year ASC;
-
 -- Sort by year descending (newest first)
 SELECT * FROM movies 
 ORDER BY year DESC;
@@ -220,39 +280,18 @@ LIMIT 5;
 -- Sort by multiple columns
 SELECT title, year, rating FROM movies 
 ORDER BY year DESC, rating DESC;
-
--- Skip first 5, get next 5
-SELECT * FROM movies 
-ORDER BY title ASC 
-LIMIT 5 OFFSET 5;
-
--- HackerRank: Cities with population > 100000
-SELECT * FROM CITY 
-WHERE COUNTRYCODE = 'USA' AND POPULATION > 100000;
-
--- HackerRank: Filter by specific criteria
-SELECT NAME FROM CITY 
-WHERE COUNTRYCODE = 'USA' AND POPULATION > 120000;
 ```
 
 ### Key Takeaways:
 1. ORDER BY changes display order, not which rows are selected
-2. Default sort is ascending (ASC) - can omit ASC keyword
-3. DESC must be explicitly stated for descending order
-4. LIMIT always comes at the END of the query
-5. Can sort by multiple columns - first column is primary sort
-6. OFFSET allows skipping rows (useful for pagination)
+2. Default sort is ascending (ASC)
+3. LIMIT always comes at the END of the query
+4. Can sort by multiple columns
 
 ### HackerRank Progress:
 - Problems Solved: 5/5 ✅
-- Section: Basic Select
-- Success Rate: 100%
-- Time Taken: ~30 minutes
 
 ### Time Spent: 1 hour
-### Exercises Completed: 
-- SQLBolt Lesson 4 (4 exercises)
-- HackerRank Basic Select (5 problems)
 
 ---
 
@@ -283,9 +322,6 @@ SELECT * FROM movies WHERE year BETWEEN 2000 AND 2010;
 
 -- Pattern matching
 SELECT title FROM movies WHERE title LIKE "Toy Story%";
-
--- Not equal
-SELECT title FROM movies WHERE director != "John Lasseter";
 ```
 
 ### Key Takeaways:
@@ -293,10 +329,9 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 2. Every query needs SELECT and FROM
 3. WHERE clause filters ROWS
 4. Use semicolon ; to end queries
-5. LIKE uses % as wildcard (any characters)
+5. LIKE uses % as wildcard
 
 ### Time Spent: 1 hour
-### Exercises Completed: SQLBolt Lessons 1-3 (14 exercises)
 
 ---
 
@@ -307,26 +342,30 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 - ✅ Day 2 - Sorting & Filtering (Feb 8, 2026)
 - ✅ Day 3 - Advanced Filtering (Feb 9, 2026)
 - ✅ Day 4 - Aggregate Functions (Feb 10, 2026)
-- ⬜ Day 5 - GROUP BY Practice
-- ⬜ Day 6 - JOINs Introduction
-- ⬜ Day 7 - Week Review
+- ✅ Day 5 - GROUP BY Mastery (Feb 11, 2026)
+- ⬜ Day 6 - HAVING Clause & Advanced GROUP BY
+- ⬜ Day 7 - Week 1 Review & Practice
 
 ### Stats
-- **Total Days Completed:** 4/270
-- **Actual Days Elapsed:** 4 days
-- **Current Streak:** 4 days 🔥🔥🔥🔥
-- **Skills Acquired:** SELECT, WHERE, ORDER BY, LIMIT, AND, OR, NOT, IN, DISTINCT, COUNT, SUM, AVG, MIN, MAX
-- **HackerRank Problems Solved:** 15+
-- **Total Exercises Completed:** 33+
-- **Next Milestone:** Complete Week 1 (Day 7)
+- **Total Days Completed:** 5/270
+- **Actual Days Elapsed:** 5 days
+- **Current Streak:** 5 days 🔥🔥🔥🔥🔥
+- **Skills Acquired:** SELECT, WHERE, ORDER BY, LIMIT, AND, OR, NOT, IN, DISTINCT, COUNT, SUM, AVG, MIN, MAX, GROUP BY
+- **HackerRank Problems Solved:** 20+
+- **Total Exercises Completed:** 46+
+- **Next Milestone:** Complete Week 1 (Day 7) - almost there!
 
 ---
 
 ## 🎯 Learning Goals
 
+**Short-term (Week 1):**
+- ✅ Master SQL fundamentals (filtering ✓, sorting ✓, aggregates ✓, GROUP BY ✓)
+- ⬜ Learn HAVING (Day 6)
+- ⬜ Week 1 review and consolidation (Day 7)
+
 **Short-term (Month 1):**
-- ✅ Master SQL fundamentals (filtering ✓, sorting ✓, aggregates ✓)
-- ⬜ Learn GROUP BY (next up!)
+- ⬜ Learn JOINs (Week 2)
 - ⬜ Complete 3 SQL projects
 - ⬜ Earn HackerRank SQL certification
 
@@ -342,7 +381,7 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 **Currently Using:**
 - SQLBolt - Interactive SQL exercises
 - HackerRank - Problem solving & certification prep
-- SQLiteOnline - Practice environment
+- W3Schools SQL TryIt - Quick practice with pre-loaded data
 - Mode Analytics - SQL tutorials
 - Alex The Analyst (YouTube) - Video lessons
 
@@ -359,120 +398,126 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 
 ## 📚 Concepts Mastered
 
+### Day 5:
+- `GROUP BY` - split data into groups, aggregate separately
+- Multiple GROUP BY columns
+- Combining GROUP BY with all aggregate functions
+- Query execution order (WHERE → GROUP BY → ORDER BY)
+- Golden rule: SELECT columns must be in GROUP BY or aggregate
+- Multi-dimensional analysis (country + city)
+- Business breakdowns (by category, region, time period)
+
 ### Day 4:
-- `COUNT()` - count rows
-- `COUNT(DISTINCT)` - count unique values
-- `SUM()` - total/sum values
-- `AVG()` - calculate average
-- `MIN()` - find minimum
-- `MAX()` - find maximum
-- `FLOOR()` - round down
-- `CEIL()` - round up
-- `ROUND()` - round to nearest
+- `COUNT()`, `COUNT(DISTINCT)`, `SUM()`, `AVG()`, `MIN()`, `MAX()`
+- `FLOOR()`, `CEIL()`, `ROUND()`
 - Combining aggregates with arithmetic
 
 ### Day 3:
-- `AND` - both conditions must be true
-- `OR` - at least one condition must be true
-- `NOT` - negate a condition
-- `IN` - match any value in a list
-- `NOT IN` - exclude values in a list
-- `DISTINCT` - remove duplicates
-- `COUNT(DISTINCT column)` - count unique values
-- `LEFT()` - get leftmost characters
-- `LENGTH()` - string length
-- `SUBSTRING()` - portion of string
-- `%` (modulo) - remainder operator
-- `UNION` - combine query results
-- Parentheses `()` for complex logic
+- `AND`, `OR`, `NOT`, `IN`, `NOT IN`
+- `DISTINCT`, `COUNT(DISTINCT column)`
+- `LEFT()`, `LENGTH()`, `SUBSTRING()`
+- `%` (modulo), `UNION`
+- Parentheses for complex logic
 
 ### Day 2:
-- `ORDER BY` - sort results
-- `ASC` - ascending order (default)
-- `DESC` - descending order
-- `LIMIT` - restrict number of rows
-- `OFFSET` - skip rows
+- `ORDER BY`, `ASC`, `DESC`
+- `LIMIT`, `OFFSET`
 - Multiple column sorting
-- Query execution order
 
 ### Day 1:
-- `SELECT` - retrieve data
-- `FROM` - specify table
-- `WHERE` - filter rows
-- `=, !=, <, >, <=, >=` - comparison operators
-- `BETWEEN` - range filtering
-- `AND, OR` - logical operators
-- `LIKE` - pattern matching
-- `%` - wildcard character
+- `SELECT`, `FROM`, `WHERE`
+- `=, !=, <, >, <=, >=`
+- `BETWEEN`, `AND, OR`
+- `LIKE`, `%` (wildcard)
 
 ---
 
 ## 💪 Daily Reflections
 
+**Day 5 Reflection (February 11, 2026):**
+- What went well: GROUP BY clicked immediately! This is a GAME-CHANGER
+- What was challenging: Remembering the golden rule at first
+- Energy level: 10/10
+- Confidence level: 9/10 (feeling like a real data analyst now!)
+- Favorite moment: When I realized GROUP BY unlocks multi-dimensional analysis
+- AHA moment: "Revenue by region" instead of just "total revenue" - this is what managers need!
+- Tomorrow's excitement: HAVING clause to filter groups!
+
 **Day 4 Reflection (February 10, 2026):**
-- What went well: Aggregates clicked immediately! Can now answer business questions
-- What was challenging: Remembering when to use COUNT(*) vs COUNT(column)
+- What went well: Aggregates clicked immediately!
+- What was challenging: COUNT(*) vs COUNT(column)
 - Energy level: 9/10
-- Confidence level: 9/10 (feeling like a real analyst!)
-- Favorite moment: Realizing I can now answer "What's our total revenue?"
-- Tomorrow's excitement: GROUP BY will unlock even more power!
+- Confidence level: 9/10
+- Favorite moment: Answering "What's our total revenue?"
 
 **Day 3 Reflection (February 9, 2026):**
-- What went well: IN operator clicked immediately, HackerRank getting easier
-- What was challenging: Complex WHERE logic with multiple conditions
+- What went well: IN operator clicked immediately
+- What was challenging: Complex WHERE logic
 - Energy level: 8/10
 - Confidence level: 8/10
 - Favorite moment: Solving Weather Observation Station 5 with UNION!
-- Tomorrow's excitement: Ready to learn aggregate functions!
 
 **Day 2 Reflection (February 8, 2026):**
 - What went well: ORDER BY and LIMIT were intuitive
-- What was challenging: Remembering query order (WHERE before ORDER BY)
 - Energy level: 8/10
 - Confidence level: 8/10
 
 **Day 1 Reflection (February 7, 2026):**
-- What went well: Completed 2 lessons! Strong momentum established
-- What was challenging: Staying focused for 2 hours
+- What went well: Strong momentum established
 - Energy level: 9/10
 - Confidence level: 8/10
-- Feeling: Excited and motivated!
 
 ---
 
 ## 🏆 Achievements Unlocked
-- ✅ 4-day streak established! 🔥🔥🔥🔥
-- ✅ 15+ HackerRank problems solved
-- ✅ Can answer business questions with SQL (COUNT, SUM, AVG, MIN, MAX)
-- ✅ Mastered filtering, sorting, and aggregating data
-- ✅ Portfolio consistently updated
-- ✅ Habit forming - consistency established
+- ✅ 5-day streak! 🔥🔥🔥🔥🔥 (habit established!)
+- ✅ 20+ HackerRank problems solved
+- ✅ **Can perform multi-dimensional business analysis with GROUP BY**
+- ✅ Can answer complex business questions (by region, category, time)
+- ✅ Mastered core SQL: filtering, sorting, aggregating, grouping
+- ✅ Portfolio consistently updated (5 days straight!)
+- ✅ Almost completed Week 1! (2 more days)
 
 ---
 
 ## 📈 Learning Insights
 
+**Major Breakthroughs:**
+1. **GROUP BY is the difference between basic SQL and data analysis**
+   - Before: One total number
+   - After: Breakdown by categories with actionable insights
+2. **Every business question has a GROUP BY pattern:**
+   - "by X" = GROUP BY X
+   - "for each Y" = GROUP BY Y
+   - "per Z" = GROUP BY Z
+3. **Multi-dimensional analysis unlocks deeper insights:**
+   - GROUP BY country, city
+   - GROUP BY category, subcategory
+   - GROUP BY year, month
+
 **Patterns I'm Noticing:**
-1. SQL problems are like puzzles - breaking them into steps helps
-2. Aggregate functions are game-changers for business questions
-3. Reading the question 2-3 times prevents mistakes
-4. IN operator saves so much typing vs multiple ORs
-5. DISTINCT is crucial for "unique" questions
-6. HackerRank discussions are gold when stuck
-7. Each day builds on the previous - concepts compound!
+- SQL builds on itself perfectly (each day uses previous days' concepts)
+- GROUP BY + aggregates = most powerful SQL combination
+- Real business questions always need GROUP BY
+- Reading the question carefully reveals which column to GROUP BY
+- Practice makes the syntax automatic
 
 **Study Habits Working Well:**
-- 1 hour daily is sustainable and effective
-- Documenting immediately helps retention
-- HackerRank for practice > just reading tutorials
-- Taking screenshots of solutions for future reference
-- GitHub commits create accountability
+- 1 hour daily = sustainable and highly effective
+- Immediate documentation = better retention
+- HackerRank + W3Schools practice = perfect combo
+- Each concept clicks after 3-5 practice queries
+- Writing queries from scratch > copy-pasting
 
-**What I've Learned About Data Analysis:**
-- It's not just about writing queries - it's about answering questions
-- Business context matters as much as technical skills
-- Simple functions (COUNT, SUM, AVG) solve most problems
-- Data analysts translate business questions into SQL
+**What Data Analysts Actually Do:**
+- Not just writing queries - answering business questions
+- Breaking down totals to find patterns
+- Identifying what's working vs what needs attention
+- GROUP BY is used in 80% of business analysis queries
+
+**Confidence Growth:**
+- Day 1: "I hope I can learn SQL"
+- Day 5: "I can analyze business data!"
 
 ---
 
@@ -482,30 +527,55 @@ SELECT title FROM movies WHERE director != "John Lasseter";
 - Day 1: Can retrieve and filter data ✅
 - Day 2: Can sort and limit results ✅
 - Day 3: Can handle complex logic ✅
-- Day 4: Can answer business questions ✅
-- Day 5: Will combine aggregates with categories (GROUP BY)
-- Day 6: Will connect multiple tables (JOINs)
-- Day 7: Will review and solidify Week 1 concepts
+- Day 4: Can answer simple business questions ✅
+- Day 5: **Can perform multi-dimensional analysis** ✅ ← HUGE!
+- Day 6: Will learn to filter groups (HAVING)
+- Day 7: Will consolidate Week 1 knowledge
 
 **Current Skill Level:** 
-From "SQL Beginner" → "Intermediate SQL User"
+**Intermediate SQL Analyst** (was beginner 5 days ago!)
 
-Can now:
-- Write clean SQL queries
-- Filter data with complex conditions
-- Sort and limit results
-- Answer quantitative business questions
-- Count, sum, and average data
-- Find min/max values
-- Work with unique values
+**Can now answer:**
+- ✅ "How many customers do we have?" → COUNT(*)
+- ✅ "What's our total revenue?" → SUM(revenue)
+- ✅ "What's the average order value?" → AVG(order_amount)
+- ✅ "What's revenue by region?" → GROUP BY region, SUM(revenue)
+- ✅ "Which products sell best?" → GROUP BY product, SUM(quantity)
+- ✅ "How many customers per country?" → GROUP BY country, COUNT(*)
+- ✅ "Monthly sales trends?" → GROUP BY month, SUM(sales)
+- ✅ "Top 10 customers by spend?" → GROUP BY customer, SUM(spend), ORDER BY, LIMIT
 
 **Ready for:**
-- GROUP BY (breaking down by categories)
-- JOINs (combining multiple tables)
-- Real business analysis scenarios
+- HAVING clause (filter groups)
+- JOINs (combine multiple tables)
+- Window functions (advanced analytics)
+- Real-world projects
 
 ---
 
-*Last updated: February 10, 2026*
-*Consistency streak: 4 days | Target completion: October 2026*
-*"Learning SQL one day at a time, building toward a Data Analyst career"*
+## 🚀 Real-World Applications
+
+**SQL Skills Mastered = Job-Ready Skills:**
+
+**What I can do now that employers want:**
+1. ✅ Extract data from databases (SELECT, WHERE)
+2. ✅ Sort and prioritize results (ORDER BY, LIMIT)
+3. ✅ Calculate business metrics (aggregates)
+4. ✅ **Break down performance by categories (GROUP BY)**
+5. ✅ Identify trends and patterns
+6. ✅ Answer stakeholder questions with data
+
+**Actual job tasks I can handle:**
+- "Show me sales by region" ← Can do!
+- "Which product categories perform best?" ← Can do!
+- "How many customers per country?" ← Can do!
+- "What's our average transaction value by month?" ← Can do!
+- "Top 10 products by revenue?" ← Can do!
+
+**This is what junior data analysts do daily!** 💼
+
+---
+
+*Last updated: February 11, 2026*
+*Consistency streak: 5 days 🔥 | Target completion: October 2026*
+*"From SQL beginner to data analyst - one GROUP BY at a time"*
