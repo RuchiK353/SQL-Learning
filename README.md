@@ -2,9 +2,154 @@
 
 > Documenting my path from zero to Data Analyst
 
-![Progress](https://img.shields.io/badge/Days%20Completed-5%2F270-blue)
+![Progress](https://img.shields.io/badge/Days%20Completed-6%2F270-blue)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-green)
-![Streak](https://img.shields.io/badge/Streak-5%20days-red)
+![Streak](https://img.shields.io/badge/Streak-6%20days-red)
+![Week](https://img.shields.io/badge/Week%201-Almost%20Complete-orange)
+
+---
+
+## Day 6 - HAVING Clause & Query Mastery (February 12, 2026)
+
+### What I Learned:
+- HAVING clause - filter groups after aggregation
+- WHERE vs HAVING - the critical difference
+- Complete SQL query execution order
+- Combining WHERE and HAVING in same query
+- Multiple conditions in HAVING clause
+- Filtering aggregated results
+- Complete query structure mastery
+
+### The Critical Difference:
+
+**WHERE = Filters ROWS (before grouping)**
+```sql
+SELECT category, COUNT(*)
+FROM products
+WHERE price > 50        -- Filter individual rows first
+GROUP BY category;
+```
+
+**HAVING = Filters GROUPS (after grouping)**
+```sql
+SELECT category, COUNT(*)
+FROM products
+GROUP BY category
+HAVING COUNT(*) > 10;   -- Filter groups after aggregation
+```
+
+### Queries I Wrote Today:
+
+```sql
+-- Categories with more than 10 products
+SELECT CategoryID, COUNT(*) as product_count
+FROM Products
+GROUP BY CategoryID
+HAVING COUNT(*) > 10
+ORDER BY product_count DESC;
+
+-- Customers who placed more than 5 orders
+SELECT CustomerID, COUNT(*) as order_count
+FROM Orders
+GROUP BY CustomerID
+HAVING COUNT(*) > 5
+ORDER BY order_count DESC;
+
+-- Countries with 5+ customers
+SELECT Country, COUNT(*) as customer_count
+FROM Customers
+GROUP BY Country
+HAVING COUNT(*) >= 5
+ORDER BY customer_count DESC;
+
+-- Categories with average price > $20
+SELECT CategoryID, 
+       AVG(Price) as avg_price,
+       COUNT(*) as product_count
+FROM Products
+GROUP BY CategoryID
+HAVING AVG(Price) > 20
+ORDER BY avg_price DESC;
+
+-- Orders with total quantity > 100
+SELECT OrderID, SUM(Quantity) as total_quantity
+FROM OrderDetails
+GROUP BY OrderID
+HAVING SUM(Quantity) > 100
+ORDER BY total_quantity DESC;
+
+-- Combining WHERE and HAVING
+SELECT CategoryID, 
+       COUNT(*) as expensive_products,
+       AVG(Price) as avg_price
+FROM Products
+WHERE Price > 20                    -- Filter rows: only expensive products
+GROUP BY CategoryID
+HAVING COUNT(*) > 5                 -- Filter groups: 5+ products
+ORDER BY avg_price DESC;
+
+-- Multiple HAVING conditions
+SELECT CategoryID,
+       COUNT(*) as product_count,
+       AVG(Price) as avg_price,
+       MAX(Price) as max_price
+FROM Products
+GROUP BY CategoryID
+HAVING COUNT(*) >= 10 AND AVG(Price) > 30
+ORDER BY avg_price DESC;
+
+-- High-value customers (spent > $1000)
+SELECT customer_id, 
+       SUM(amount) as total_spent,
+       COUNT(*) as order_count
+FROM orders
+GROUP BY customer_id
+HAVING SUM(amount) > 1000
+ORDER BY total_spent DESC;
+```
+
+### Key Takeaways:
+1. **WHERE filters ROWS** before grouping, **HAVING filters GROUPS** after grouping
+2. WHERE cannot use aggregate functions, HAVING can
+3. WHERE is more efficient (reduces data before grouping)
+4. Can use BOTH in same query: WHERE first, then HAVING
+5. HAVING must come AFTER GROUP BY in query
+6. Query execution order: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+
+### Complete Query Structure (MASTERED!):
+```sql
+SELECT column, aggregate(column)     -- 5. Choose what to display
+FROM table                            -- 1. Get the data
+WHERE row_filter                      -- 2. Filter individual rows
+GROUP BY column                       -- 3. Create groups
+HAVING group_filter                   -- 4. Filter groups
+ORDER BY column                       -- 6. Sort results
+LIMIT number;                         -- 7. Restrict output
+```
+
+### When to Use Each:
+- **Use WHERE:** Filtering individual rows, condition doesn't involve aggregates
+- **Use HAVING:** Filtering groups, condition involves aggregates (COUNT, SUM, AVG, etc.)
+- **Use BOTH:** Need to filter rows AND groups
+
+### Business Questions I Can Now Answer:
+- ✅ "Show categories with 10+ products" → HAVING COUNT(*) > 10
+- ✅ "Customers who spent over $1000?" → HAVING SUM(amount) > 1000
+- ✅ "Products with average rating > 4.5?" → HAVING AVG(rating) > 4.5
+- ✅ "Regions with sales above $100K?" → HAVING SUM(sales) > 100000
+- ✅ "Categories where max price > $500?" → HAVING MAX(price) > 500
+- ✅ "High-value customers in USA?" → WHERE country='USA' + HAVING SUM > 1000
+
+### Time Spent: 1 hour
+### Exercises Completed:
+- 1 HackerRank problem
+- 7 HAVING practice queries on W3Schools
+- Week 1 review quiz (6/6 correct)
+
+### Tomorrow's Goal:
+- Week 1 review and consolidation
+- Solve 10 mixed problems combining all Week 1 concepts
+- Celebrate Week 1 completion! 🎉
 
 ---
 
@@ -14,12 +159,11 @@
 - GROUP BY - split data into groups and aggregate each group separately
 - Combining GROUP BY with COUNT, SUM, AVG, MIN, MAX
 - Multiple GROUP BY columns (multi-dimensional analysis)
-- Query execution order (WHERE before GROUP BY, ORDER BY after)
-- The golden rule: Every SELECT column must be in GROUP BY or in aggregate function
-- Real business breakdowns (by region, category, country, etc.)
+- Query execution order
+- The golden rule: Every SELECT column must be in GROUP BY or aggregate
+- Real business breakdowns
 
-### Queries I Wrote Today:
-
+### Key Queries:
 ```sql
 -- Count customers by country
 SELECT Country, COUNT(*) as customer_count
@@ -30,173 +174,33 @@ ORDER BY customer_count DESC;
 -- Total sales by region
 SELECT region, SUM(sales) as total_sales
 FROM orders
-GROUP BY region
-ORDER BY total_sales DESC;
+GROUP BY region;
 
--- Average price by category
-SELECT category, AVG(price) as avg_price
-FROM products
-GROUP BY category;
-
--- Multiple aggregates per group
-SELECT 
-    category,
-    COUNT(*) as product_count,
-    AVG(price) as avg_price,
-    MIN(price) as min_price,
-    MAX(price) as max_price
-FROM products
-GROUP BY category;
-
--- Multiple GROUP BY columns (2 dimensions)
+-- Multiple GROUP BY columns
 SELECT country, city, COUNT(*) as customer_count
 FROM customers
-GROUP BY country, city
-ORDER BY customer_count DESC;
-
--- Top 10 products by quantity sold
-SELECT product_id, SUM(quantity) as total_sold
-FROM order_items
-GROUP BY product_id
-ORDER BY total_sold DESC
-LIMIT 10;
-
--- HackerRank: Top Earners
-SELECT (salary * months) as earnings, COUNT(*)
-FROM Employee
-GROUP BY earnings
-ORDER BY earnings DESC
-LIMIT 1;
-
--- Monthly sales analysis
-SELECT 
-    DATE_TRUNC('month', order_date) as month,
-    SUM(amount) as monthly_sales,
-    COUNT(*) as order_count,
-    AVG(amount) as avg_order_value
-FROM orders
-GROUP BY DATE_TRUNC('month', order_date)
-ORDER BY month;
+GROUP BY country, city;
 ```
 
-### Key Takeaways:
-1. GROUP BY splits data into groups and runs aggregates on each group separately
-2. Without GROUP BY: one total for everything
-3. With GROUP BY: one total for EACH category/group
-4. Every column in SELECT must be in GROUP BY OR in an aggregate function
-5. Query order: SELECT → FROM → WHERE → GROUP BY → ORDER BY → LIMIT
-6. WHERE filters rows BEFORE grouping, HAVING filters groups AFTER (next lesson!)
-7. Can group by multiple columns for multi-dimensional analysis
-
-### Business Questions I Can Now Answer:
-- **"Total revenue by region?"** → `GROUP BY region`
-- **"How many customers per country?"** → `GROUP BY country`
-- **"Average order value by customer?"** → `GROUP BY customer_id`
-- **"Top selling products?"** → `GROUP BY product_id, ORDER BY SUM(quantity) DESC`
-- **"Monthly sales trends?"** → `GROUP BY month`
-- **"Revenue by product category?"** → `GROUP BY category`
-- **"Customers by city and country?"** → `GROUP BY country, city`
-
-### The Game-Changer Moment:
-Before: "Total sales: $500,000" (one number, not very useful)
-After: 
-- North: $150,000 (30%)
-- South: $120,000 (24%)  
-- East: $130,000 (26%)
-- West: $100,000 (20%)
-**Now I can identify which regions need attention!**
-
-### HackerRank Progress:
-- Problems Solved Today: 5 ✅
-- Total Problems Solved: 20+
-- Sections: Aggregation (with GROUP BY concepts)
-- Success Rate: 100%
-
-### Challenges Faced:
-- Remembering the golden rule (every SELECT column in GROUP BY or aggregate)
-- Understanding query execution order (WHERE before GROUP BY)
-- Top Earners problem took time but finally clicked!
-- Realizing GROUP BY creates one row per unique value/combination
-
 ### Time Spent: 1 hour
-### Exercises Completed: 
-- 5 HackerRank problems
-- 8 practice GROUP BY queries on W3Schools
-- Real business analysis scenarios
-
-### Tomorrow's Goal:
-- Learn HAVING clause (filter groups after aggregation)
-- More advanced GROUP BY scenarios
-- Prepare for Week 1 review
 
 ---
 
 ## Day 4 - Aggregate Functions (February 10, 2026)
 
 ### What I Learned:
-- COUNT() - count rows or values
-- COUNT(DISTINCT) - count unique values
-- SUM() - add up values
-- AVG() - calculate average
-- MIN() - find minimum value
-- MAX() - find maximum value
-- FLOOR() - round down
-- CEIL() - round up
-- Can combine aggregates with arithmetic
+- COUNT(), SUM(), AVG(), MIN(), MAX()
+- COUNT(DISTINCT) for unique values
+- FLOOR(), CEIL(), ROUND() for rounding
 
-### Queries I Wrote Today:
-
+### Key Queries:
 ```sql
--- Count cities with population > 100K
-SELECT COUNT(*) 
-FROM STATION 
-WHERE POPULATION > 100000;
+-- Count, sum, average
+SELECT COUNT(*), SUM(revenue), AVG(revenue) FROM sales;
 
--- Total population in California
-SELECT SUM(POPULATION) 
-FROM STATION 
-WHERE DISTRICT = 'California';
-
--- Average population (rounded down)
-SELECT FLOOR(AVG(POPULATION)) 
-FROM STATION;
-
--- Difference between max and min
-SELECT MAX(POPULATION) - MIN(POPULATION) 
-FROM CITY;
-
--- Count unique countries
-SELECT COUNT(DISTINCT Country) 
-FROM Customer;
-
--- Multiple aggregates in one query
-SELECT 
-    COUNT(*) as total_customers,
-    AVG(age) as average_age,
-    MIN(signup_date) as first_customer,
-    MAX(total_spend) as highest_spender
-FROM customers;
+-- Min and max
+SELECT MIN(price), MAX(price) FROM products;
 ```
-
-### Key Takeaways:
-1. Aggregate functions collapse many rows into one result
-2. COUNT(*) counts all rows, COUNT(column) ignores NULLs
-3. COUNT(DISTINCT column) counts unique values only
-4. Can combine aggregates with arithmetic (MAX - MIN)
-5. FLOOR rounds down, CEIL rounds up, ROUND rounds to nearest
-6. These functions answer real business questions!
-
-### Business Applications Learned:
-- **Total revenue:** `SUM(sales)`
-- **Number of customers:** `COUNT(DISTINCT customer_id)`
-- **Average order value:** `AVG(order_amount)`
-- **Highest sale:** `MAX(sale_amount)`
-- **Price range:** `MAX(price) - MIN(price)`
-
-### HackerRank Progress:
-- Problems Solved: 5 ✅
-- Total Problems: 15+
-- Section: Aggregation
 
 ### Time Spent: 1 hour
 
@@ -205,51 +209,20 @@ FROM customers;
 ## Day 3 - Advanced Filtering (February 9, 2026)
 
 ### What I Learned:
-- Combining conditions with AND, OR, NOT
-- Using parentheses to control logic order
+- AND, OR, NOT operators
 - IN operator for multiple values
-- NOT IN to exclude multiple values
-- DISTINCT to find unique values
-- COUNT with DISTINCT for unique counts
-- String functions (LEFT, LENGTH, SUBSTRING)
-- Modulo operator (%) for even/odd
+- DISTINCT for unique values
+- String functions (LEFT, LENGTH)
 
-### Queries I Wrote Today:
-
+### Key Queries:
 ```sql
--- Combining AND conditions
-SELECT * FROM movies 
-WHERE year > 2000 AND rating > 8;
-
--- Using OR for alternatives
-SELECT * FROM movies 
-WHERE year < 1990 OR year > 2010;
-
--- Complex logic with parentheses
-SELECT * FROM movies 
-WHERE (year > 2000 OR director = 'Pixar') 
-AND rating > 8;
-
--- IN operator (cleaner than multiple ORs)
+-- IN operator
 SELECT * FROM movies 
 WHERE director IN ('Pixar', 'Disney', 'DreamWorks');
 
--- HackerRank: Filter cities starting with vowels
-SELECT DISTINCT CITY 
-FROM STATION 
-WHERE LEFT(CITY, 1) IN ('A','E','I','O','U');
+-- DISTINCT
+SELECT DISTINCT country FROM customers;
 ```
-
-### Key Takeaways:
-1. AND requires BOTH conditions to be true (narrows results)
-2. OR requires AT LEAST ONE condition to be true (widens results)
-3. Use parentheses () to control order of operations
-4. IN is cleaner than multiple OR statements
-5. DISTINCT removes duplicate values
-
-### HackerRank Progress:
-- Problems Solved: 5/5 ✅
-- Total Problems: 10
 
 ### Time Spent: 1 hour
 
@@ -258,38 +231,17 @@ WHERE LEFT(CITY, 1) IN ('A','E','I','O','U');
 ## Day 2 - Sorting & Filtering (February 8, 2026)
 
 ### What I Learned:
-- ORDER BY clause for sorting results
-- ASC (ascending) and DESC (descending) order
-- LIMIT clause to restrict number of rows
-- Sorting by multiple columns
-- Query execution order matters
-- OFFSET to skip rows
+- ORDER BY (ASC, DESC)
+- LIMIT, OFFSET
+- Multi-column sorting
 
-### Queries I Wrote Today:
-
+### Key Queries:
 ```sql
--- Sort by year descending (newest first)
-SELECT * FROM movies 
-ORDER BY year DESC;
-
--- Get top 5 newest movies
+-- Sort and limit
 SELECT * FROM movies 
 ORDER BY year DESC 
 LIMIT 5;
-
--- Sort by multiple columns
-SELECT title, year, rating FROM movies 
-ORDER BY year DESC, rating DESC;
 ```
-
-### Key Takeaways:
-1. ORDER BY changes display order, not which rows are selected
-2. Default sort is ascending (ASC)
-3. LIMIT always comes at the END of the query
-4. Can sort by multiple columns
-
-### HackerRank Progress:
-- Problems Solved: 5/5 ✅
 
 ### Time Spent: 1 hour
 
@@ -298,38 +250,15 @@ ORDER BY year DESC, rating DESC;
 ## Day 1 - SQL Basics (February 7, 2026)
 
 ### What I Learned:
-- SELECT statement - retrieves data from database
-- FROM clause - specifies which table
-- WHERE clause - filters data based on conditions
-- Comparison operators: =, !=, <, >, <=, >=
-- Logical operators: AND, OR
-- Special operators: BETWEEN, IN, LIKE
+- SELECT, FROM, WHERE
+- Comparison operators
+- BETWEEN, LIKE, %
 
-### Queries I Wrote Today:
-
+### Key Queries:
 ```sql
--- Get all columns from a table
-SELECT * FROM movies;
-
--- Get specific columns
-SELECT title, year FROM movies;
-
--- Filter with WHERE
+-- Basic select with filter
 SELECT * FROM movies WHERE year > 2000;
-
--- Multiple conditions
-SELECT * FROM movies WHERE year BETWEEN 2000 AND 2010;
-
--- Pattern matching
-SELECT title FROM movies WHERE title LIKE "Toy Story%";
 ```
-
-### Key Takeaways:
-1. SQL is not case-sensitive but UPPERCASE for keywords is convention
-2. Every query needs SELECT and FROM
-3. WHERE clause filters ROWS
-4. Use semicolon ; to end queries
-5. LIKE uses % as wildcard
 
 ### Time Spent: 1 hour
 
@@ -337,35 +266,37 @@ SELECT title FROM movies WHERE title LIKE "Toy Story%";
 
 ## 📊 Progress Tracker
 
-### Month 1: SQL Foundations
+### Month 1: SQL Foundations - Week 1 Almost Complete! 🎯
 - ✅ Day 1 - SQL Basics (Feb 7, 2026)
 - ✅ Day 2 - Sorting & Filtering (Feb 8, 2026)
 - ✅ Day 3 - Advanced Filtering (Feb 9, 2026)
 - ✅ Day 4 - Aggregate Functions (Feb 10, 2026)
 - ✅ Day 5 - GROUP BY Mastery (Feb 11, 2026)
-- ⬜ Day 6 - HAVING Clause & Advanced GROUP BY
-- ⬜ Day 7 - Week 1 Review & Practice
+- ✅ Day 6 - HAVING Clause & Query Mastery (Feb 12, 2026)
+- ⬜ Day 7 - Week 1 Review & Celebration
 
 ### Stats
-- **Total Days Completed:** 5/270
-- **Actual Days Elapsed:** 5 days
-- **Current Streak:** 5 days 🔥🔥🔥🔥🔥
-- **Skills Acquired:** SELECT, WHERE, ORDER BY, LIMIT, AND, OR, NOT, IN, DISTINCT, COUNT, SUM, AVG, MIN, MAX, GROUP BY
+- **Total Days Completed:** 6/270
+- **Actual Days Elapsed:** 6 days
+- **Current Streak:** 6 days 🔥🔥🔥🔥🔥🔥
+- **Week 1 Progress:** 6/7 days (86% complete!)
+- **Skills Acquired:** SELECT, FROM, WHERE, ORDER BY, LIMIT, AND, OR, NOT, IN, DISTINCT, COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING
 - **HackerRank Problems Solved:** 20+
-- **Total Exercises Completed:** 46+
-- **Next Milestone:** Complete Week 1 (Day 7) - almost there!
+- **Total Exercises Completed:** 55+
+- **Next Milestone:** Complete Week 1 tomorrow! 🎉
 
 ---
 
 ## 🎯 Learning Goals
 
-**Short-term (Week 1):**
-- ✅ Master SQL fundamentals (filtering ✓, sorting ✓, aggregates ✓, GROUP BY ✓)
-- ⬜ Learn HAVING (Day 6)
+**Week 1 Goals (Almost There!):**
+- ✅ Master SQL fundamentals (filtering ✓, sorting ✓, aggregates ✓, GROUP BY ✓, HAVING ✓)
 - ⬜ Week 1 review and consolidation (Day 7)
+- ⬜ Celebrate Week 1 completion! 🎉
 
-**Short-term (Month 1):**
+**Month 1 Goals:**
 - ⬜ Learn JOINs (Week 2)
+- ⬜ Learn subqueries and CTEs (Week 3-4)
 - ⬜ Complete 3 SQL projects
 - ⬜ Earn HackerRank SQL certification
 
@@ -390,192 +321,207 @@ SELECT title FROM movies WHERE title LIKE "Toy Story%";
 - GitHub (Portfolio & Documentation)
 
 **Coming Soon:**
+- JOINs (Week 2)
 - Excel (Month 3)
 - Power BI (Month 3-4)
 - Python (Month 5-6)
 
 ---
 
-## 📚 Concepts Mastered
+## 📚 Complete SQL Query Structure (MASTERED!)
 
-### Day 5:
-- `GROUP BY` - split data into groups, aggregate separately
-- Multiple GROUP BY columns
-- Combining GROUP BY with all aggregate functions
-- Query execution order (WHERE → GROUP BY → ORDER BY)
-- Golden rule: SELECT columns must be in GROUP BY or aggregate
-- Multi-dimensional analysis (country + city)
-- Business breakdowns (by category, region, time period)
+### Full Query Syntax:
+```sql
+SELECT column, aggregate(column)
+FROM table
+WHERE row_condition
+GROUP BY column
+HAVING group_condition
+ORDER BY column
+LIMIT number;
+```
 
-### Day 4:
-- `COUNT()`, `COUNT(DISTINCT)`, `SUM()`, `AVG()`, `MIN()`, `MAX()`
-- `FLOOR()`, `CEIL()`, `ROUND()`
-- Combining aggregates with arithmetic
+### Execution Order (Critical!):
+1. **FROM** - Get the table
+2. **WHERE** - Filter individual rows
+3. **GROUP BY** - Create groups
+4. **HAVING** - Filter groups
+5. **SELECT** - Choose columns to display
+6. **ORDER BY** - Sort results
+7. **LIMIT** - Restrict output
 
-### Day 3:
-- `AND`, `OR`, `NOT`, `IN`, `NOT IN`
-- `DISTINCT`, `COUNT(DISTINCT column)`
-- `LEFT()`, `LENGTH()`, `SUBSTRING()`
-- `%` (modulo), `UNION`
-- Parentheses for complex logic
+### All Concepts Mastered:
 
-### Day 2:
-- `ORDER BY`, `ASC`, `DESC`
-- `LIMIT`, `OFFSET`
-- Multiple column sorting
-
-### Day 1:
-- `SELECT`, `FROM`, `WHERE`
-- `=, !=, <, >, <=, >=`
-- `BETWEEN`, `AND, OR`
-- `LIKE`, `%` (wildcard)
+**Day 1:** SELECT, FROM, WHERE, comparison operators, BETWEEN, LIKE
+**Day 2:** ORDER BY, ASC, DESC, LIMIT, OFFSET
+**Day 3:** AND, OR, NOT, IN, NOT IN, DISTINCT, string functions
+**Day 4:** COUNT, SUM, AVG, MIN, MAX, COUNT(DISTINCT), FLOOR, CEIL, ROUND
+**Day 5:** GROUP BY (single & multiple columns), combining with aggregates
+**Day 6:** HAVING, WHERE vs HAVING, complete query structure
 
 ---
 
 ## 💪 Daily Reflections
 
+**Day 6 Reflection (February 12, 2026):**
+- What went well: WHERE vs HAVING finally clicked completely!
+- What was challenging: Remembering query execution order at first
+- Energy level: 9/10
+- Confidence level: 9/10
+- Favorite moment: Writing a query with both WHERE and HAVING successfully
+- AHA moment: "HAVING is just WHERE for groups" - mind blown!
+- Tomorrow's excitement: Week 1 review and completion celebration!
+
 **Day 5 Reflection (February 11, 2026):**
-- What went well: GROUP BY clicked immediately! This is a GAME-CHANGER
-- What was challenging: Remembering the golden rule at first
-- Energy level: 10/10
-- Confidence level: 9/10 (feeling like a real data analyst now!)
-- Favorite moment: When I realized GROUP BY unlocks multi-dimensional analysis
-- AHA moment: "Revenue by region" instead of just "total revenue" - this is what managers need!
-- Tomorrow's excitement: HAVING clause to filter groups!
+- What went well: GROUP BY is a game-changer!
+- AHA moment: Multi-dimensional analysis unlocked
+- Confidence level: 9/10
 
 **Day 4 Reflection (February 10, 2026):**
 - What went well: Aggregates clicked immediately!
-- What was challenging: COUNT(*) vs COUNT(column)
-- Energy level: 9/10
-- Confidence level: 9/10
 - Favorite moment: Answering "What's our total revenue?"
+- Confidence level: 9/10
 
-**Day 3 Reflection (February 9, 2026):**
-- What went well: IN operator clicked immediately
-- What was challenging: Complex WHERE logic
-- Energy level: 8/10
-- Confidence level: 8/10
-- Favorite moment: Solving Weather Observation Station 5 with UNION!
-
-**Day 2 Reflection (February 8, 2026):**
-- What went well: ORDER BY and LIMIT were intuitive
-- Energy level: 8/10
-- Confidence level: 8/10
-
-**Day 1 Reflection (February 7, 2026):**
-- What went well: Strong momentum established
-- Energy level: 9/10
-- Confidence level: 8/10
+**Days 1-3:** Strong foundation built, momentum established
 
 ---
 
 ## 🏆 Achievements Unlocked
-- ✅ 5-day streak! 🔥🔥🔥🔥🔥 (habit established!)
+- ✅ 6-day streak! 🔥🔥🔥🔥🔥🔥 (habit solidified!)
 - ✅ 20+ HackerRank problems solved
-- ✅ **Can perform multi-dimensional business analysis with GROUP BY**
-- ✅ Can answer complex business questions (by region, category, time)
-- ✅ Mastered core SQL: filtering, sorting, aggregating, grouping
-- ✅ Portfolio consistently updated (5 days straight!)
-- ✅ Almost completed Week 1! (2 more days)
+- ✅ **Complete SQL query structure mastered**
+- ✅ Can filter both rows (WHERE) and groups (HAVING)
+- ✅ Week 1 almost complete (1 day left!)
+- ✅ Can write complex, multi-clause SQL queries
+- ✅ Understand complete query execution flow
+- ✅ Portfolio updated 6 days straight
 
 ---
 
 ## 📈 Learning Insights
 
-**Major Breakthroughs:**
-1. **GROUP BY is the difference between basic SQL and data analysis**
-   - Before: One total number
-   - After: Breakdown by categories with actionable insights
-2. **Every business question has a GROUP BY pattern:**
-   - "by X" = GROUP BY X
-   - "for each Y" = GROUP BY Y
-   - "per Z" = GROUP BY Z
-3. **Multi-dimensional analysis unlocks deeper insights:**
-   - GROUP BY country, city
-   - GROUP BY category, subcategory
-   - GROUP BY year, month
+**Major Breakthrough Today:**
+Understanding the **complete query execution order** was huge! Now I understand WHY queries are written in a specific order and HOW SQL processes them.
+
+**WHERE vs HAVING Clarity:**
+- WHERE = filter rows (like a bouncer at the door)
+- HAVING = filter groups (like quality control after assembly)
+Both serve different purposes, both are essential!
 
 **Patterns I'm Noticing:**
-- SQL builds on itself perfectly (each day uses previous days' concepts)
-- GROUP BY + aggregates = most powerful SQL combination
-- Real business questions always need GROUP BY
-- Reading the question carefully reveals which column to GROUP BY
-- Practice makes the syntax automatic
+- SQL builds perfectly - each day uses all previous concepts
+- Query structure is logical once you understand execution order
+- Most complex business questions need: WHERE + GROUP BY + HAVING + ORDER BY
+- Writing queries is becoming automatic now
+- Week 1 gave complete SQL foundation
 
-**Study Habits Working Well:**
-- 1 hour daily = sustainable and highly effective
-- Immediate documentation = better retention
-- HackerRank + W3Schools practice = perfect combo
-- Each concept clicks after 3-5 practice queries
-- Writing queries from scratch > copy-pasting
-
-**What Data Analysts Actually Do:**
-- Not just writing queries - answering business questions
-- Breaking down totals to find patterns
-- Identifying what's working vs what needs attention
-- GROUP BY is used in 80% of business analysis queries
+**Study Habits Still Working:**
+- 1 hour daily = perfect for retention
+- Immediate practice after learning = concepts stick
+- Documenting daily = easier to review
+- Streak motivation = powerful accountability
+- W3Schools + HackerRank = perfect combo
 
 **Confidence Growth:**
-- Day 1: "I hope I can learn SQL"
-- Day 5: "I can analyze business data!"
+- Day 1: "Can I learn SQL?"
+- Day 6: "I can write complex SQL queries!"
+- Week 1 almost done and I feel CONFIDENT
 
 ---
 
 ## 🎯 Skills Progression
 
-**Week 1 Progress:**
-- Day 1: Can retrieve and filter data ✅
-- Day 2: Can sort and limit results ✅
-- Day 3: Can handle complex logic ✅
-- Day 4: Can answer simple business questions ✅
-- Day 5: **Can perform multi-dimensional analysis** ✅ ← HUGE!
-- Day 6: Will learn to filter groups (HAVING)
-- Day 7: Will consolidate Week 1 knowledge
+**Week 1 Summary (Days 1-6):**
+- Day 1: Basic retrieval ✅
+- Day 2: Sorting and limiting ✅
+- Day 3: Complex filtering ✅
+- Day 4: Aggregation ✅
+- Day 5: Grouping ✅
+- Day 6: **Complete query mastery** ✅
+- Day 7: Review and consolidation
 
 **Current Skill Level:** 
-**Intermediate SQL Analyst** (was beginner 5 days ago!)
+**Intermediate SQL Analyst** with complete foundation!
 
-**Can now answer:**
-- ✅ "How many customers do we have?" → COUNT(*)
-- ✅ "What's our total revenue?" → SUM(revenue)
-- ✅ "What's the average order value?" → AVG(order_amount)
-- ✅ "What's revenue by region?" → GROUP BY region, SUM(revenue)
-- ✅ "Which products sell best?" → GROUP BY product, SUM(quantity)
-- ✅ "How many customers per country?" → GROUP BY country, COUNT(*)
-- ✅ "Monthly sales trends?" → GROUP BY month, SUM(sales)
-- ✅ "Top 10 customers by spend?" → GROUP BY customer, SUM(spend), ORDER BY, LIMIT
+**Can now write queries like:**
+```sql
+SELECT 
+    category,
+    COUNT(*) as product_count,
+    AVG(price) as avg_price,
+    SUM(quantity) as total_inventory
+FROM products
+WHERE price > 10
+GROUP BY category
+HAVING COUNT(*) > 5 AND AVG(price) > 30
+ORDER BY total_inventory DESC
+LIMIT 10;
+```
 
-**Ready for:**
-- HAVING clause (filter groups)
-- JOINs (combine multiple tables)
-- Window functions (advanced analytics)
-- Real-world projects
+**This is real professional-level SQL!** 💼
 
 ---
 
 ## 🚀 Real-World Applications
 
-**SQL Skills Mastered = Job-Ready Skills:**
+**Complete SQL Foundation = Job Ready for SQL Tasks!**
 
-**What I can do now that employers want:**
-1. ✅ Extract data from databases (SELECT, WHERE)
-2. ✅ Sort and prioritize results (ORDER BY, LIMIT)
-3. ✅ Calculate business metrics (aggregates)
-4. ✅ **Break down performance by categories (GROUP BY)**
-5. ✅ Identify trends and patterns
-6. ✅ Answer stakeholder questions with data
+**Queries I Can Write:**
+1. ✅ Simple retrieval: "Show all customers"
+2. ✅ Filtered retrieval: "Show customers from USA"
+3. ✅ Sorted results: "Show customers by signup date"
+4. ✅ Top N: "Show top 10 customers by spend"
+5. ✅ Aggregates: "Total revenue, customer count, average order"
+6. ✅ Grouped aggregates: "Revenue by region"
+7. ✅ Filtered groups: "Regions with revenue > $100K"
+8. ✅ **Complex multi-clause:** "Top 5 categories with 10+ products and avg price > $50"
 
-**Actual job tasks I can handle:**
-- "Show me sales by region" ← Can do!
-- "Which product categories perform best?" ← Can do!
-- "How many customers per country?" ← Can do!
-- "What's our average transaction value by month?" ← Can do!
-- "Top 10 products by revenue?" ← Can do!
+**Actual Job Tasks I Can Handle:**
+- ✅ "Show sales by region, only regions with sales > $100K" 
+- ✅ "Which product categories have 20+ products and average price over $30?"
+- ✅ "List customers who placed 5+ orders and spent over $1000"
+- ✅ "Top 10 products by revenue in Electronics category"
+- ✅ "Countries with 10+ customers, sorted by customer count"
 
-**This is what junior data analysts do daily!** 💼
+**Week 1 = Complete SQL foundation for entry-level analyst roles!** 💼
 
 ---
 
-*Last updated: February 11, 2026*
-*Consistency streak: 5 days 🔥 | Target completion: October 2026*
-*"From SQL beginner to data analyst - one GROUP BY at a time"*
+## 📖 Week 1 Knowledge Base
+
+### Query Template (Use This!):
+```sql
+-- Complete query structure
+SELECT column, aggregate(column) as alias
+FROM table
+WHERE row_filter                    -- Individual rows
+GROUP BY column
+HAVING group_filter                 -- Groups only
+ORDER BY column [ASC|DESC]
+LIMIT number;
+
+-- Execution order to remember:
+-- FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+```
+
+### Quick Decision Tree:
+**Need to filter?**
+- Individual rows? → WHERE
+- Groups/aggregates? → HAVING
+- Both? → Use both!
+
+**Need to calculate?**
+- One value for all? → Aggregate without GROUP BY
+- One value per category? → Aggregate WITH GROUP BY
+
+**Need to sort?**
+- Add ORDER BY at the end
+
+**Need top N?**
+- Add LIMIT after ORDER BY
+
+---
+
+*Last updated: February 12, 2026*
+*Consistency streak: 6 days 🔥 | Week 1: 6/7 complete | Target: October 2026*
+*"Week 1 almost complete - SQL foundation mastered!"*
